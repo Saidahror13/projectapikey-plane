@@ -24,6 +24,7 @@ class CategoryListView(APIView):
 
 
 class CategoryDetailView(APIView):
+
     def get_object(self, pk):
         return get_object_or_404(Category, pk=pk)
 
