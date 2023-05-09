@@ -1,19 +1,23 @@
+from django.core.mail import send_mail
 from django.shortcuts import render
 
 # Create your views here.
 
 from django.contrib.auth import authenticate
 from django.http import Http404
+from django.utils.crypto import get_random_string
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.views import TokenObtainPairView
 
+from plane import settings
 from users.models import User
-
+from users.models import VerificationCode
 from users.serializer import UserSerializer, RegisterSerializer, LoginSerializer, CustomTokenObtainSerializer, \
-    UserDetailSerializer
+    UserDetailSerializer, SendEmailVerificationCodeSerializer
 
 
 class RegisterView(APIView):
@@ -55,3 +59,17 @@ class LoginView(APIView):
             return Response(serializer.data)
         else:
             raise Http404
+
+
+class SendEmailVerificationCode(APIView):
+    @swagger_auto_schema(request_body=SendEmailVerificationCodeSerializer)
+    def post(self, request, *args, **kwargs):
+        serializer = SendEmailVerificationCodeSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data.get("email")
+        code = get_random_string(allowed_chars='123456789', length=6)
+        VerificationCode.objects.create(email=email, code=code)
+        subject = 'Verification'
+        messages = f'Hi {email},Your verification code is  {code}. Don''t give anyone'
+        send_mail(subject, messages, from_email=settings.EMAIL_HOST_USER, recipient_list=[email])
+        return Response({"detail": 'Sent successfully '})

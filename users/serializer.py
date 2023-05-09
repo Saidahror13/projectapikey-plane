@@ -26,16 +26,15 @@ class RegisterSerializer(serializers.ModelSerializer):
     password1 = serializers.CharField(write_only=True, min_length=6)
     password2 = serializers.CharField(write_only=True, min_length=6)
 
-
-class Meta:
-    model = User
-    fields = ('id',
-              'first_name',
-              'last_name',
-              'email',
-              'password1',
-              'password2'
-              )
+    class Meta:
+        model = User
+        fields = ('id',
+                  'first_name',
+                  'last_name',
+                  'email',
+                  'password1',
+                  'password2'
+                  )
 
 
 def validate(self, attrs):
@@ -73,3 +72,7 @@ class CustomTokenObtainSerializer(TokenObtainSerializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
+
+
+class SendEmailVerificationCodeSerializer(serializers.Serializer):
+    email = serializers.EmailField()
