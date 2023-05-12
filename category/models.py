@@ -1,5 +1,6 @@
 from django.db import models
 
+
 # Create your models here.
 
 
@@ -11,3 +12,18 @@ class Category(models.Model):
     def __str__(self):
         return self.title
 
+
+class Brand(models.Model):
+    title = models.CharField(max_length=255)
+    logo = models.ImageField(upload_to='brand')
+
+    def __str__(self):
+        return self.title
+
+
+class TimestampModel(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True

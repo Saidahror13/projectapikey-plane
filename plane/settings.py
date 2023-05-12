@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'drf_yasg',
     'rest_framework_simplejwt',
     'products',
-    'users'
+    'users',
+    'django_filters'
 ]
 
 MIDDLEWARE = [
@@ -155,3 +156,6 @@ EMAIL_PORT = env("EMAIL_PORT")
 EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = True
+
+MEDIA_URL = "media/"
+MEDIA_ROOT = BASE_DIR / 'media'

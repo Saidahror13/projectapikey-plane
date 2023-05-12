@@ -51,16 +51,27 @@ from django.shortcuts import get_object_or_404
 from httplib2 import Response
 from rest_framework import generics
 from rest_framework import status
-
+from django_filters.rest_framework import DjangoFilterBackend
 from products.models import Product
 from products.serializer import ProductListSerializer, ProductCreateSerializer, ProductSerializer
 from rest_framework import exceptions
+from rest_framework.filters import OrderingFilter
+from paginations import CustomPageNumberPagination
 
 
 class ProductListCreateView(generics.ListCreateAPIView):
-    queryset = Product.objects.all()
-
+    queryset = Product.objects.order_by('-id')
+    filter_backends = (DjangoFilterBackend, OrderingFilter)
+    filterset_fields = ('category', 'brand')
+    ordering_fields = ('id', 'price')
+    search_fields = ('title', 'category_title', 'brand_title')
+    pagination_class = CustomPageNumberPagination
     serializer_class = ProductListSerializer
+
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return ProductCreateSerializer
+        return ProductListSerializer
 
 
 class ProductListView(generics.ListAPIView):
